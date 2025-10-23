@@ -18,6 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "uploads/";
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $tmpName = $_FILES['profile_pic']['tmp_name'];
+        $fileName = basename($_FILES['profile_pic']['name']);
+        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+        $newFileName = uniqid('profile_', true) . '.' . $fileExt;
+        $targetFile = $targetDir . $newFileName;
+
+        if (move_uploaded_file($tmpName, $targetFile)) {
+            $personal['profile_pic'] = $targetFile;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to upload profile picture.']);
+            exit;
+        }
+    } else {
+        $personal['profile_pic'] = $personal['profile_pic'] ?? null;
+    }
+
     $stmt = $conn->prepare("SELECT id FROM profiles WHERE user_id = ? AND deleted_at IS NULL");
     $stmt->bind_param("s", $user_id);
     $stmt->execute();
@@ -82,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $personal['profile_pic']
         );
         $stmt->execute();
-        $profile_id = $stmt->insert_id;  
+        $profile_id = $stmt->insert_id;
         $stmt->close();
     }
 
@@ -109,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $specific_field   = $profession['specific_field'] ?? '';
         $skills           = $profession['skills'] ?? [];
         $location         = $profession['location'] ?? '';
-    
+
         $skills_json = is_array($skills) ? implode(',', $skills) : $skills;
 
         if ($prof_id && in_array($prof_id, $existingIds)) {

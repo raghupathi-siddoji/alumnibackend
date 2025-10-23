@@ -50,9 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $post_id = intval($_GET['post_id']);
 
         $stmt = $conn->prepare("
-            SELECT c.id, c.comment, c.comment_date, p.full_name, p.profile_pic
+            SELECT c.id, c.comment, c.comment_date, p.full_name, p.profile_pic , u.role as user_role
             FROM community_comments c
             LEFT JOIN profiles p ON c.user_id = p.user_id
+            LEFT JOIN users u ON c.user_id = u.id
             WHERE c.community_post_id = ?
             ORDER BY c.comment_date desc
         ");
@@ -63,11 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comments = [];
 
         while ($row = $result->fetch_assoc()) {
+            $authorName = ($row['user_role'] === 'Admin') ? 'Admin' : $row['full_name'];
             $comments[] = [
                 'id' => $row['id'],
                 'text' => $row['comment'],
                 'date' => $row['comment_date'],
-                'name' => $row['full_name'] ?? 'Unknown',
+                'name' => $authorName ?? 'Unknown',
                 'avatar' => $row['profile_pic'] ?? null,
             ];
         }

@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description = $_POST['description'] ?? '';
         $existingImage = $_POST['existing_image'] ?? null;
         $user_id = $_POST['user_id'] ?? null;
+        $user_role = $_POST['user_role'] ?? null;
         $id = $_POST['post_id'] ?? null;
 
         $imagePath = $existingImage;
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("ssi", $content_type, $description, $id);
             }
         } else {
-            $admin_approval = 'Pending';
+            $admin_approval = ($user_role == 'Admin') ? 'Approved' : 'Pending';
             $stmt = $conn->prepare("
                 INSERT INTO community_posts (content_type, description, image, user_id, post_date, admin_approval)
                 VALUES (?, ?, ?, ?, NOW(), ?)
@@ -83,10 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         $selectSql = "SELECT 
                         p.id, p.user_id, p.content_type, p.description, p.image, p.post_date, p.admin_approval, 
-                        prof.full_name AS author_name, prof.profile_pic AS author_pic, prof.yop AS author_batch, 
+                        prof.full_name AS author_name, prof.profile_pic AS author_pic, prof.yop AS author_batch, u.role AS user_role,
                         COUNT(c.id) AS comments_count
                       FROM community_posts p 
-                      JOIN profiles prof ON p.user_id = prof.user_id 
+                      LEFT JOIN profiles prof ON p.user_id = prof.user_id 
+                      LEFT JOIN users u ON p.user_id = u.id
                       LEFT JOIN community_comments c ON p.id = c.community_post_id
                       WHERE p.deleted_at IS NULL";
 
@@ -113,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $posts = [];
 
         while ($row = $result->fetch_assoc()) {
+            $authorName = ($row['user_role'] === 'Admin') ? 'Admin' : $row['author_name'];
             $posts[] = [
                 'id' => $row['id'],
                 'user_id' => $row['user_id'],
@@ -122,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 'post_date' => $row['post_date'],
                 'admin_approval' => $row['admin_approval'],
 
-                'authorName' => $row['author_name'],
+                'authorName' => $authorName,
                 'authorPic' => $row['author_pic'],
                 'authorBatch' => $row['author_batch'],
 
