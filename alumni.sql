@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2025 at 08:52 AM
+-- Generation Time: Oct 24, 2025 at 06:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -80,6 +80,38 @@ CREATE TABLE `events` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `mentorships`
+--
+
+CREATE TABLE `mentorships` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `mentorship_type_id` int(11) NOT NULL,
+  `description` text NOT NULL,
+  `tags` text NOT NULL,
+  `attachment` text DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mentorship_types`
+--
+
+CREATE TABLE `mentorship_types` (
+  `id` int(11) NOT NULL,
+  `mentorship_type` varchar(50) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `openings`
 --
 
@@ -133,6 +165,37 @@ CREATE TABLE `profiles` (
   `location` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scholarships`
+--
+
+CREATE TABLE `scholarships` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `scholarship_type_id` int(11) NOT NULL,
+  `fund` int(50) NOT NULL,
+  `description` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scholarship_types`
+--
+
+CREATE TABLE `scholarship_types` (
+  `id` int(11) NOT NULL,
+  `scholarship_type` varchar(50) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -206,6 +269,18 @@ ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `mentorships`
+--
+ALTER TABLE `mentorships`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `mentorship_types`
+--
+ALTER TABLE `mentorship_types`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `openings`
 --
 ALTER TABLE `openings`
@@ -215,6 +290,18 @@ ALTER TABLE `openings`
 -- Indexes for table `profiles`
 --
 ALTER TABLE `profiles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `scholarships`
+--
+ALTER TABLE `scholarships`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `scholarship_types`
+--
+ALTER TABLE `scholarship_types`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -252,6 +339,18 @@ ALTER TABLE `events`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `mentorships`
+--
+ALTER TABLE `mentorships`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `mentorship_types`
+--
+ALTER TABLE `mentorship_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `openings`
 --
 ALTER TABLE `openings`
@@ -261,6 +360,18 @@ ALTER TABLE `openings`
 -- AUTO_INCREMENT for table `profiles`
 --
 ALTER TABLE `profiles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `scholarships`
+--
+ALTER TABLE `scholarships`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `scholarship_types`
+--
+ALTER TABLE `scholarship_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
